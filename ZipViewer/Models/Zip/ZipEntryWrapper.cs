@@ -7,6 +7,13 @@ namespace ZipViewer.Models.Zip;
 public class ZipEntryWrapper : ObservableObject
 {
     private ZipArchiveEntry entry;
+
+    public string Name
+    {
+        get;
+        protected set;
+    }
+
     public string Path => entry.FullName;
     public DateTimeOffset LastChange => entry.LastWriteTime;
 
@@ -51,6 +58,7 @@ public class ZipEntryWrapper : ObservableObject
         Size = new ByteSize(entry.Length);
         CompressedSize = new ByteSize(entry.CompressedLength);
         ExternalAttributes = (FileAttributes)entry.ExternalAttributes;
+        Name = entry.Name;
     }
 
     public virtual void Delete()

@@ -1,6 +1,6 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 
-namespace ZipViewer.Helpers;
+namespace ZipViewer.Helpers.Extensions;
 
 public static class FrameExtensions
 {

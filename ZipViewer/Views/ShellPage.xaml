@@ -9,6 +9,12 @@
     mc:Ignorable="d">
 
     <Grid>
-        <Frame x:Name="NavigationFrame" />
+       <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Button Command="{x:Bind ViewModel.OpenArchiveCommand}">Open</Button>
+        <Frame Grid.Row="1" x:Name="NavigationFrame" />
     </Grid>
 </Page>

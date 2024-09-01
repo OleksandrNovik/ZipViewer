@@ -44,6 +44,8 @@ public partial class App : Application
         {
             //Services 
             services.AddTransient<INavigationService, NavigationService>();
+            services.AddTransient<IFilePickingService, FilePickingService>();
+            services.AddTransient<IZipHierarchyBuilder, ZipHierarchyBuilder>();
 
             // Views and ViewModels
             services.AddTransient<MainViewModel>();
@@ -63,7 +65,7 @@ public partial class App : Application
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
         m_window = MainWindow;
-        m_window.Content = GetService<MainPage>();
+        m_window.Content = GetService<ShellPage>();
         m_window.Activate();
     }
 

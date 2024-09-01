@@ -1,7 +1,7 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using ZipViewer.Contracts;
-using ZipViewer.Helpers;
+using ZipViewer.Helpers.Extensions;
 using ZipViewer.ViewModels.Contracts;
 using ZipViewer.Views;
 

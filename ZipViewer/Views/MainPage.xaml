@@ -7,6 +7,5 @@
     mc:Ignorable="d">
 
     <Grid>
-        <Button Command="{x:Bind ViewModel.OpenArchiveCommand}">Open</Button>
     </Grid>
 </Page>

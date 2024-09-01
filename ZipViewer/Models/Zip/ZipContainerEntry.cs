@@ -1,4 +1,5 @@
 ﻿using System.IO.Compression;
+using ZipViewer.Helpers;
 
 namespace ZipViewer.Models.Zip;
 
@@ -10,6 +11,7 @@ public sealed class ZipContainerEntry : ZipEntryWrapper
     }
     public ZipContainerEntry(ZipArchiveEntry entry) : base(entry)
     {
+        Name = PathHelper.GetArchiveDirectoryName(entry.FullName);
     }
 
     public override void Delete()
