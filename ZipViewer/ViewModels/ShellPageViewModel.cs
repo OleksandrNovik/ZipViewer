@@ -47,7 +47,11 @@ public sealed partial class ShellPageViewModel : ObservableRecipient
     {
         this.archive = archive;
 
+        // Build archive's inner structure
         var root = hierarchyBuilder.BuildHierarchy(archive);
+
+        // Navigate to a resulting root directory
+        Navigation.Navigate(root);
     }
 
     /// <summary>
