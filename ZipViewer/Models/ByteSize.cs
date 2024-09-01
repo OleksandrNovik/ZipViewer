@@ -1,14 +1,10 @@
 ﻿namespace ZipViewer.Models;
 
-public enum ByteUnits
-{
-    Bytes, KBytes, MBytes, GBytes, TBytes, PBytes, EBytes, ZBytes, YBytes, RBytes, QBytes
-}
 public sealed class ByteSize
 {
     public static readonly string[] Sizes =
     [
-        "Bytes", "kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "RB", "QB"
+        "B", "kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "RB", "QB"
     ];
 
     private string friendlyValue;
@@ -20,20 +16,13 @@ public sealed class ByteSize
     public ByteSize(long inBytes)
     {
         InBytes = inBytes;
-        friendlyValue = Convert(inBytes, ByteUnits.Bytes);
+        friendlyValue = Convert(inBytes);
     }
 
-    public ByteSize(double value, ByteUnits units)
-    {
-        var power = (int)units;
-        InBytes = (long)(value * Math.Pow(1024, power));
-        friendlyValue = Convert(value, units);
-    }
-
-    private string Convert(double value, ByteUnits units)
+    private string Convert(double value)
     {
         var converted = value;
-        var order = (int)units;
+        var order = 0;
 
         while (converted > 1024)
         {

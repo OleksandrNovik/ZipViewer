@@ -4,7 +4,7 @@ using Microsoft.UI.Xaml.Media.Imaging;
 
 namespace ZipViewer.Models.Zip;
 
-public abstract class ZipEntryWrapper : ObservableObject
+public class ZipEntryWrapper : ObservableObject
 {
     private ZipArchiveEntry entry;
     public string Path => entry.FullName;
@@ -45,7 +45,7 @@ public abstract class ZipEntryWrapper : ObservableObject
         protected set;
     }
 
-    protected ZipEntryWrapper(ZipArchiveEntry entry)
+    public ZipEntryWrapper(ZipArchiveEntry entry)
     {
         this.entry = entry;
         Size = new ByteSize(entry.Length);

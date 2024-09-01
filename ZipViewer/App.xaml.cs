@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
+using ZipViewer.Contracts;
+using ZipViewer.Services;
 using ZipViewer.ViewModels;
 using ZipViewer.Views;
 
@@ -40,10 +42,15 @@ public partial class App : Application
         UseContentRoot(AppContext.BaseDirectory).
         ConfigureServices((context, services) =>
         {
+            //Services 
+            services.AddTransient<INavigationService, NavigationService>();
+
             // Views and ViewModels
             services.AddTransient<MainViewModel>();
             services.AddTransient<MainPage>();
 
+            services.AddTransient<ShellPageViewModel>();
+            services.AddTransient<ShellPage>();
             // Configuration
         }).
         Build();
