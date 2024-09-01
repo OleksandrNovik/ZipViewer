@@ -1,5 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using ZipViewer.Contracts;
+using ZipViewer.Helpers;
 using ZipViewer.Models.Zip;
 using ZipViewer.ViewModels.Contracts;
 
@@ -8,6 +10,7 @@ namespace ZipViewer.ViewModels;
 public partial class MainViewModel : ObservableRecipient, INavigationAware
 {
     private ZipContainerEntry container;
+    private readonly IFileInfoProvider infoProvider;
 
     [ObservableProperty]
     private bool isArchiveSelected;
@@ -16,9 +19,29 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         get;
         private set;
     }
-    public MainViewModel()
+    public MainViewModel(IFileInfoProvider fileInfoProvider)
     {
+        infoProvider = fileInfoProvider;
         isArchiveSelected = false;
+    }
+
+    private void InitializeDirectory(ZipContainerEntry currentContainer)
+    {
+        // Initializing items and current container 
+        container = currentContainer;
+        ContainerItems = new ObservableCollection<ZipEntryWrapper>(container.InnerEntries);
+
+        // Getting thumbnails and file types for each entry
+        Parallel.ForEach(ContainerItems, entry =>
+        {
+            ThreadingHelper.TryEnqueue(() =>
+            {
+                infoProvider.GetFileInfoForItem(entry);
+            });
+        });
+
+        // Notifying system that archive is opened now
+        IsArchiveSelected = true;
     }
 
     public void OnNavigatedTo(object parameter)
@@ -26,9 +49,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         // If navigation parameter is container of zip entries
         if (parameter is ZipContainerEntry paramContainer)
         {
-            container = paramContainer;
-            ContainerItems = new ObservableCollection<ZipEntryWrapper>(container.InnerEntries);
-            IsArchiveSelected = true;
+            InitializeDirectory(paramContainer);
         }
     }
 

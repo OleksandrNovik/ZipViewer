@@ -49,7 +49,13 @@ public class ZipEntryWrapper : ObservableObject
     public BitmapImage Thumbnail
     {
         get;
-        protected set;
+        set;
+    }
+
+    public string FileType
+    {
+        get;
+        set;
     }
 
     public ZipEntryWrapper(ZipArchiveEntry entry)

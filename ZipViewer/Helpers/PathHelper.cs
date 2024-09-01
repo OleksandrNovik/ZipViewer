@@ -14,12 +14,13 @@ public static class PathHelper
     public static string DirectoryKeyFromArchiveKey(string path)
     {
         var lastSlashIndex = path.LastIndexOf('/');
+        var result = string.Empty;
 
         if (lastSlashIndex > 0)
         {
-            return path.Substring(0, lastSlashIndex);
+            result = path.Substring(0, lastSlashIndex);
         }
 
-        throw new ArgumentException($"Provided path \"{path}\" does not contain '/'", nameof(path));
+        return result;
     }
 }

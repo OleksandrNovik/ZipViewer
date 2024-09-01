@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
 using ZipViewer.Contracts;
+using ZipViewer.Helpers;
 using ZipViewer.Services;
 using ZipViewer.ViewModels;
 using ZipViewer.Views;
@@ -35,6 +36,7 @@ public partial class App : Application
 
     public App()
     {
+        ThreadingHelper.InitializeForMainThread();
         InitializeComponent();
 
         Host = Microsoft.Extensions.Hosting.Host.
@@ -46,6 +48,7 @@ public partial class App : Application
             services.AddTransient<INavigationService, NavigationService>();
             services.AddTransient<IFilePickingService, FilePickingService>();
             services.AddTransient<IZipHierarchyBuilder, ZipHierarchyBuilder>();
+            services.AddTransient<IFileInfoProvider, FileInfoProvider>();
 
             // Views and ViewModels
             services.AddTransient<MainViewModel>();

@@ -5,15 +5,53 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+    xmlns:zip="using:ZipViewer.Models.Zip"
     mc:Ignorable="d">
+
+    <Page.Resources>
+        <DataTemplate x:DataType="zip:ZipEntryWrapper" x:Name="NameTemplate">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Image Source="{x:Bind Thumbnail}" Width="20" Margin="10" />
+                <TextBlock Grid.Column="1" Text="{x:Bind Name, Mode=OneWay}" VerticalAlignment="Center" />
+
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
 
     <Grid  Margin="20"
            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-        <controls:DataGrid AutoGenerateColumns="True"
+        <controls:DataGrid AutoGenerateColumns="False" 
+                           CanUserReorderColumns="False"
+                           CanUserResizeColumns="True"
+                           CanUserSortColumns="True"
                            ItemsSource="{x:Bind ViewModel.ContainerItems}"
                            Visibility="{x:Bind ViewModel.IsArchiveSelected, Mode=OneWay,
                                         Converter={StaticResource BoolToVisibilityConverter}}">
+
+            <controls:DataGrid.Columns>
+
+                <controls:DataGridTemplateColumn Header="Name" IsReadOnly="True"
+                                                 CellTemplate="{StaticResource NameTemplate}"></controls:DataGridTemplateColumn>
+
+                <controls:DataGridTextColumn Header="Last change" Binding="{Binding Path=LastChange}" IsReadOnly="True" />
+
+                <controls:DataGridTextColumn Header="Comment" Binding="{Binding Path=FileType}" IsReadOnly="True" />
+
+                <controls:DataGridTextColumn Header="Comment" Binding="{Binding Path=Comment}" />
+
+                <controls:DataGridTextColumn Header="Size" Binding="{Binding Path=Size}" IsReadOnly="True" />
+
+                <controls:DataGridTextColumn Header="Compressed size" Binding="{Binding Path=CompressedSize}" IsReadOnly="True" />
+
+ 
+
+            </controls:DataGrid.Columns>
 
         </controls:DataGrid>
 
