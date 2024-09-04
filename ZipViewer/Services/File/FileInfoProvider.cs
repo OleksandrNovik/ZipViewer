@@ -1,8 +1,8 @@
-﻿using ZipViewer.Contracts;
+﻿using ZipViewer.Contracts.File;
 using ZipViewer.Helpers;
 using ZipViewer.Models.Zip;
 
-namespace ZipViewer.Services;
+namespace ZipViewer.Services.File;
 
 /// <summary>
 /// Realization of information provider that provides thumbnail and other information for zip entry

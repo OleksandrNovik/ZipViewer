@@ -5,7 +5,7 @@ namespace ZipViewer.Models.Zip;
 
 public sealed class ZipContainerEntry : ZipEntryWrapper
 {
-    public IReadOnlyCollection<ZipEntryWrapper> InnerEntries
+    public IReadOnlyList<ZipEntryWrapper> InnerEntries
     {
         get; set;
     }

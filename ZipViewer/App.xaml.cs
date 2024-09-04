@@ -2,8 +2,10 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
 using ZipViewer.Contracts;
+using ZipViewer.Contracts.File;
 using ZipViewer.Helpers;
 using ZipViewer.Services;
+using ZipViewer.Services.File;
 using ZipViewer.ViewModels;
 using ZipViewer.Views;
 
@@ -46,9 +48,12 @@ public partial class App : Application
         {
             //Services 
             services.AddTransient<INavigationService, NavigationService>();
-            services.AddTransient<IFilePickingService, FilePickingService>();
             services.AddTransient<IZipHierarchyBuilder, ZipHierarchyBuilder>();
+
+            // File services
+            services.AddTransient<IFilePickingService, FilePickingService>();
             services.AddTransient<IFileInfoProvider, FileInfoProvider>();
+            services.AddTransient<IFileService, FileService>();
 
             // Views and ViewModels
             services.AddTransient<MainViewModel>();

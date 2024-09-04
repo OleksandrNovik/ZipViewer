@@ -26,7 +26,7 @@
                                         IconSource="ms-appx:///Assets/CommandIcons/OpenIcon.png" />
 
             <userControls:ToolBarButton Width="120" 
-                                        Text="Extract to" 
+                                        Text="ExtractAsync to" 
                                         IconSize="50"
                                         IconSource="ms-appx:///Assets/CommandIcons/ExtractIcon.png" />
 

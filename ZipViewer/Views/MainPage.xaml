@@ -29,6 +29,8 @@
     <Grid  Margin="20"
            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
+        <Button Command="{x:Bind ViewModel.OpenEntryCommand}">Open</Button>
+
         <controls:DataGrid AutoGenerateColumns="False" 
                            CanUserReorderColumns="False"
                            CanUserResizeColumns="True"

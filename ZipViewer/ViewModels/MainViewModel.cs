@@ -1,7 +1,10 @@
 ﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
-using ZipViewer.Contracts;
+using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using ZipViewer.Contracts.File;
 using ZipViewer.Helpers;
+using ZipViewer.Models.Messages;
 using ZipViewer.Models.Zip;
 using ZipViewer.ViewModels.Contracts;
 
@@ -11,6 +14,7 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 {
     private ZipContainerEntry container;
     private readonly IFileInfoProvider infoProvider;
+    private readonly IFileService fileService;
 
     [ObservableProperty]
     private bool isArchiveSelected;
@@ -19,10 +23,23 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         get;
         private set;
     }
-    public MainViewModel(IFileInfoProvider fileInfoProvider)
+    public MainViewModel(IFileInfoProvider fileInfoProvider, IFileService fileService)
     {
         infoProvider = fileInfoProvider;
+        this.fileService = fileService;
         isArchiveSelected = false;
+    }
+
+    [RelayCommand]
+    private async Task OpenEntryAsync(ZipEntryWrapper entry)
+    {
+        if (entry is ZipContainerEntry openedContainer)
+        {
+            Messenger.Send(new ContainerEntryNavigatedMessage(openedContainer));
+        } else
+        {
+            await fileService.StartAsync(entry);
+        }
     }
 
     private void InitializeDirectory(ZipContainerEntry currentContainer)
@@ -32,13 +49,13 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         ContainerItems = new ObservableCollection<ZipEntryWrapper>(container.InnerEntries);
 
         // Getting thumbnails and file types for each entry
-        Parallel.ForEach(ContainerItems, entry =>
+        foreach (var entry in ContainerItems)
         {
             ThreadingHelper.TryEnqueue(() =>
             {
                 infoProvider.GetFileInfoForItem(entry);
             });
-        });
+        }
 
         // Notifying system that archive is opened now
         IsArchiveSelected = true;

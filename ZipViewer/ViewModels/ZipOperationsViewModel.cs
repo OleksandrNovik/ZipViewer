@@ -2,7 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using ZipViewer.Contracts;
+using ZipViewer.Contracts.File;
 using ZipViewer.Models.Messages;
 
 namespace ZipViewer.ViewModels;

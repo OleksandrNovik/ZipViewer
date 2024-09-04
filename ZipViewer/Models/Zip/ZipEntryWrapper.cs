@@ -1,6 +1,7 @@
 ﻿using System.IO.Compression;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml.Media.Imaging;
+using IOPath = System.IO.Path;
 
 namespace ZipViewer.Models.Zip;
 
@@ -70,5 +71,16 @@ public class ZipEntryWrapper : ObservableObject
     public virtual void Delete()
     {
         entry.Delete();
+    }
+
+    public async virtual Task ExtractAsync(string directory)
+    {
+        using (var fs = new FileStream(IOPath.Combine(directory, Name), FileMode.Create))
+        {
+            using (var entryStream = entry.Open())
+            {
+                await entryStream.CopyToAsync(fs);
+            }
+        }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using ZipViewer.Models.Zip;
 
-namespace ZipViewer.Contracts;
+namespace ZipViewer.Contracts.File;
 
 /// <summary>
 /// Contract for a service that provides file info for zip entries
