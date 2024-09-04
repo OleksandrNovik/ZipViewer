@@ -6,6 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     xmlns:zip="using:ZipViewer.Models.Zip"
+    xmlns:converters="using:ZipViewer.UI.Converters"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -21,6 +22,8 @@
 
             </Grid>
         </DataTemplate>
+
+        <converters:DateOffsetToFormatConverter Format="g" x:Key="DateOffsetToFormatConverter" />
     </Page.Resources>
 
     <Grid  Margin="20"
@@ -39,7 +42,8 @@
                 <controls:DataGridTemplateColumn Header="Name" IsReadOnly="True"
                                                  CellTemplate="{StaticResource NameTemplate}"></controls:DataGridTemplateColumn>
 
-                <controls:DataGridTextColumn Header="Last change" Binding="{Binding Path=LastChange}" IsReadOnly="True" />
+                <controls:DataGridTextColumn Header="Last change" Binding="{Binding Path=LastChange, 
+                    Converter={StaticResource DateOffsetToFormatConverter}}" IsReadOnly="True" />
 
                 <controls:DataGridTextColumn Header="Comment" Binding="{Binding Path=FileType}" IsReadOnly="True" />
 
