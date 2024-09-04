@@ -16,6 +16,8 @@
     <LangVersion>12</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="UI\UserControls\ToolBarButton.xaml" />
+    <None Remove="UI\ZipOperationsToolbar.xaml" />
     <None Remove="Views\ShellPage.xaml" />
   </ItemGroup>
 
@@ -39,6 +41,18 @@
 
   <ItemGroup>
     <Folder Include="Models\Contracts\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="UI\UserControls\ToolBarButton.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="UI\ZipOperationsToolbar.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
 
   <ItemGroup>

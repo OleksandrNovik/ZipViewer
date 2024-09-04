@@ -56,7 +56,9 @@ public partial class App : Application
 
             services.AddTransient<ShellPageViewModel>();
             services.AddTransient<ShellPage>();
-            // Configuration
+
+            services.AddTransient<ZipOperationsViewModel>();
+
         }).
         Build();
     }

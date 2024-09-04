@@ -6,6 +6,7 @@
     xmlns:local="using:ZipViewer.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:userControls="using:ZipViewer.UI.UserControls"
     mc:Ignorable="d">
 
     <Grid>
@@ -14,7 +15,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Button Command="{x:Bind ViewModel.OpenArchiveCommand}">Open</Button>
+        <userControls:ZipOperationsToolbar />
         <Frame Grid.Row="1" x:Name="NavigationFrame" />
     </Grid>
 </Page>
