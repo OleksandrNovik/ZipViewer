@@ -15,7 +15,7 @@
                     Orientation="Horizontal">
 
             <userControls:ToolBarButton Width="120" 
-                                        Text="Open"
+                                        Text="Open archive"
                                         Command="{x:Bind ViewModel.OpenArchiveCommand}"
                                         IconSize="50"
                                         IconSource="ms-appx:///Assets/CommandIcons/ZipIcon.png" />
@@ -26,13 +26,20 @@
                                         IconSource="ms-appx:///Assets/CommandIcons/OpenIcon.png" />
 
             <userControls:ToolBarButton Width="120" 
-                                        Text="ExtractAsync to" 
+                                        Text="Extract to folder" 
                                         IconSize="50"
                                         IconSource="ms-appx:///Assets/CommandIcons/ExtractIcon.png" />
 
+            <Border BorderThickness="0.5 0" VerticalAlignment="Stretch" BorderBrush="{ThemeResource ButtonBorderThemeBrush}" />
+
             <userControls:ToolBarButton Width="120" 
-                                        Text="Delete" 
+                                        Text="Open" 
                                         IconSize="45"
+                                        IconSource="ms-appx:///Assets/CommandIcons/OpenFileIcon.png" />
+
+                <userControls:ToolBarButton Width="120" 
+                                        Text="Delete" 
+                                        IconSize="40"
                                         IconSource="ms-appx:///Assets/CommandIcons/DeleteIcon.png" />
 
         </StackPanel>

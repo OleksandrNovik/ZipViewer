@@ -16,6 +16,7 @@
     <LangVersion>12</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="UI\UserControls\NavigationToolBar.xaml" />
     <None Remove="UI\UserControls\ToolBarButton.xaml" />
     <None Remove="UI\ZipOperationsToolbar.xaml" />
     <None Remove="Views\ShellPage.xaml" />
@@ -64,4 +65,12 @@
   <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
     <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
   </PropertyGroup>
+  
+  <ItemGroup>
+    <CustomAdditionalCompileInputs Remove="UI\UserControls\NavigationToolBar.xaml" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Resource Remove="UI\UserControls\NavigationToolBar.xaml" />
+  </ItemGroup>
 </Project>

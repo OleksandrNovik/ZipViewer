@@ -10,7 +10,13 @@ namespace ZipViewer.Models.Messages;
 public record ArchiveOpenedMessage(ZipArchive Archive);
 
 /// <summary>
-/// Notifies listeners that new container inside archive should be opened
+/// Message that notifies navigation view model that new .zip file is opened, so history of navigation should be updated
 /// </summary>
-/// <param name="Container"> Container to "open" or navigate </param>
-public record ContainerEntryNavigatedMessage(ZipContainerEntry Container);
+/// <param name="Root"> Root directory of .zip file </param>
+public record ArchiveRootOpened(ZipContainerEntry Root);
+
+/// <summary>
+/// Message that requires navigation operation to open provided container
+/// </summary>
+/// <param name="Container"> Container to open and save to navigation history </param>
+public record NavigationRequiredMessage(ZipContainerEntry Container);

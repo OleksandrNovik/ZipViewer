@@ -7,8 +7,15 @@ public sealed class ZipContainerEntry : ZipEntryWrapper
 {
     public IReadOnlyList<ZipEntryWrapper> InnerEntries
     {
-        get; set;
+        get;
+        set;
     }
+    public ZipContainerEntry? Parent
+    {
+        get;
+        set;
+    }
+
     public ZipContainerEntry(ZipArchiveEntry entry) : base(entry)
     {
         Name = PathHelper.GetArchiveDirectoryName(entry.FullName);

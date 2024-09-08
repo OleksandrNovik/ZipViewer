@@ -1,6 +1,8 @@
 ﻿using System.IO.Compression;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml.Media.Imaging;
+using ZipViewer.Helpers.Extensions;
+using Icon = System.Drawing.Icon;
 using IOPath = System.IO.Path;
 
 namespace ZipViewer.Models.Zip;
@@ -66,6 +68,13 @@ public class ZipEntryWrapper : ObservableObject
         CompressedSize = new ByteSize(entry.CompressedLength);
         ExternalAttributes = (FileAttributes)entry.ExternalAttributes;
         Name = entry.Name;
+        Thumbnail = new BitmapImage();
+    }
+
+    public void UpdateThumbnail(Icon thumbnailSource)
+    {
+        Thumbnail.SetSource(thumbnailSource);
+        OnPropertyChanged(nameof(Thumbnail));
     }
 
     public virtual void Delete()

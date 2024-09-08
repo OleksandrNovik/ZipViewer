@@ -36,16 +36,41 @@ namespace ZipViewer.Services.File
             var tempPath = Path.GetTempPath();
             var file = await ExtractAsync(wrapper, tempPath);
 
-            // Start process to open file
-            Process.Start(new ProcessStartInfo(file.FullName)
+            try
             {
-                UseShellExecute = true
-            });
+                var fileOpenProcess = new Process
+                {
+                    StartInfo = new ProcessStartInfo(file.FullName)
+                    {
+                        UseShellExecute = true
+                    },
 
-            // Delete file after operation
-            file.Delete();
+                    EnableRaisingEvents = true
+                };
+
+                // Start process to open file
+                fileOpenProcess.Start();
+
+                // Cleanup: Subscribe to process exit event to delete file on exit
+                fileOpenProcess.Exited += FileProcessExited;
+            }
+            catch
+            {
+                //TODO: Notify user that item cannot be opened
+            }
         }
 
-
+        /// <summary>
+        /// When process with opened in service file is exited, file that was created to be opened gets deleted
+        /// </summary>
+        /// <param name="sender"> Process that was exited </param>
+        /// <param name="e"> Empty event args </param>
+        private void FileProcessExited(object? sender, EventArgs e)
+        {
+            if (sender is Process process)
+            {
+                System.IO.File.Delete(process.StartInfo.FileName);
+            }
+        }
     }
 }

@@ -1,15 +1,21 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
-using ZipViewer.Contracts;
+using ZipViewer.Contracts.Navigation;
 using ZipViewer.Helpers.Extensions;
+using ZipViewer.Models.Zip;
 using ZipViewer.ViewModels.Contracts;
 using ZipViewer.Views;
 
-namespace ZipViewer.Services;
+namespace ZipViewer.Services.Navigation;
 
+/// <summary>
+/// Service that performs navigation between pages
+/// </summary>
 public sealed class NavigationService : INavigationService
 {
     private Frame? frame;
+
+    /// <inheritdoc />
     public Frame? Frame
     {
         get => frame;
@@ -21,6 +27,9 @@ public sealed class NavigationService : INavigationService
         }
     }
 
+    /// <summary>
+    /// Register to a frame navigation event
+    /// </summary>
     private void RegisterFrameEvents()
     {
         if (frame != null)
@@ -29,6 +38,9 @@ public sealed class NavigationService : INavigationService
         }
     }
 
+    /// <summary>
+    /// Unregister frame navigation event
+    /// </summary>
     private void UnregisterFrameEvents()
     {
         if (frame != null)
@@ -36,19 +48,20 @@ public sealed class NavigationService : INavigationService
             frame.Navigated -= OnNavigated;
         }
     }
-
-    public void Navigate(object parameter)
+    /// <inheritdoc />
+    public void Navigate(ZipContainerEntry entry)
     {
         ArgumentNullException.ThrowIfNull(Frame);
         var previousViewModel = Frame.GetPageViewModel();
 
-        bool navigated = Frame.NavigateToType(typeof(MainPage), parameter, new FrameNavigationOptions
+        var navigated = Frame.NavigateToType(typeof(MainPage), entry, new FrameNavigationOptions
         {
             IsNavigationStackEnabled = false
         });
 
         if (navigated)
         {
+            // Notify view model that its page is being navigated from
             if (previousViewModel is INavigationAware navigationAware)
             {
                 navigationAware.OnNavigatedFrom();
@@ -59,6 +72,7 @@ public sealed class NavigationService : INavigationService
     {
         if (sender is Frame navFrame)
         {
+            // Notify view model that its page was navigated
             if (navFrame.GetPageViewModel() is INavigationAware navigationAware)
             {
                 navigationAware.OnNavigatedTo(e.Parameter);

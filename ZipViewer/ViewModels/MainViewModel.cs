@@ -30,12 +30,16 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         isArchiveSelected = false;
     }
 
+    /// <summary>
+    /// Opens archive entry when executed
+    /// </summary>
+    /// <param name="entry"> Entry to open </param>
     [RelayCommand]
     private async Task OpenEntryAsync(ZipEntryWrapper entry)
     {
         if (entry is ZipContainerEntry openedContainer)
         {
-            Messenger.Send(new ContainerEntryNavigatedMessage(openedContainer));
+            Messenger.Send(new NavigationRequiredMessage(openedContainer));
         } else
         {
             await fileService.StartAsync(entry);

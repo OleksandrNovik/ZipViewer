@@ -20,7 +20,10 @@ public sealed class ZipHierarchyBuilder : IZipHierarchyBuilder
             // Set up enumerator's first element
             entriesEnumerator.MoveNext();
             // Creating root of a currently checked directory
-            var root = new ZipContainerEntry(entriesEnumerator.Current);
+            var root = new ZipContainerEntry(entriesEnumerator.Current)
+            {
+                Parent = null
+            };
 
             BuildForCurrentRoot(root, entriesEnumerator);
 
@@ -57,31 +60,19 @@ public sealed class ZipHierarchyBuilder : IZipHierarchyBuilder
                 break;
             }
 
-            var added = string.IsNullOrEmpty(current.Name) ? new ZipContainerEntry(current) : new ZipEntryWrapper(current);
+            var added = string.IsNullOrEmpty(current.Name) ?
+                new ZipContainerEntry(current)
+                {
+                    Parent = root
+                } : new ZipEntryWrapper(current);
+
             enumerator.MoveNext();
             entries.Add(added);
-
 
             if (added is ZipContainerEntry container)
             {
                 BuildForCurrentRoot(container, enumerator);
             }
-
-            //// If entry has name - it is a file inside archive
-            //if (!string.IsNullOrEmpty(current.Name))
-            //{
-            //    // We can just add it to current archive directory
-            //    entries.Add(new ZipEntryWrapper(current));
-
-            //} else
-            //{
-            //    // If it is entry that should contain other entries we should check it too
-            //    var subDirectory = new ZipContainerEntry(current);
-
-            //    BuildForCurrentRoot(subDirectory, enumerator);
-
-            //    entries.Add(subDirectory);
-            //}
         }
 
         // Set inner items for current folder as found items in method

@@ -7,6 +7,8 @@
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     xmlns:zip="using:ZipViewer.Models.Zip"
     xmlns:converters="using:ZipViewer.UI.Converters"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:dataGridBehaviors="using:ZipViewer.UI.Behaviors.DataGridBehaviors"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -17,7 +19,7 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <Image Source="{x:Bind Thumbnail}" Width="20" Margin="10" />
+                <Image Source="{x:Bind Thumbnail, Mode=OneWay}" Width="20" Margin="10" />
                 <TextBlock Grid.Column="1" Text="{x:Bind Name, Mode=OneWay}" VerticalAlignment="Center" />
 
             </Grid>
@@ -28,8 +30,6 @@
 
     <Grid  Margin="20"
            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
-        <Button Command="{x:Bind ViewModel.OpenEntryCommand}">Open</Button>
 
         <controls:DataGrid AutoGenerateColumns="False" 
                            CanUserReorderColumns="False"
@@ -58,6 +58,10 @@
  
 
             </controls:DataGrid.Columns>
+
+            <interactivity:Interaction.Behaviors>
+                <dataGridBehaviors:DataGridItemDoubleClickBehavior Command="{x:Bind ViewModel.OpenEntryCommand}" />
+            </interactivity:Interaction.Behaviors>
 
         </controls:DataGrid>
 

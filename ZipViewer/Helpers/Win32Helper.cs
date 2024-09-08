@@ -1,7 +1,5 @@
 ﻿using System.Runtime.InteropServices;
-using Microsoft.UI.Xaml.Media.Imaging;
 using Vanara.PInvoke;
-using ZipViewer.Helpers.Extensions;
 using ZipViewer.Models.Zip;
 using Icon = System.Drawing.Icon;
 
@@ -29,9 +27,7 @@ public static class Win32Helper
 
         using (var icon = Icon.FromHandle(shFileInfo.hIcon.DangerousGetHandle()))
         {
-            var bitmap = new BitmapImage();
-            bitmap.SetSource(icon);
-            entry.Thumbnail = bitmap;
+            entry.UpdateThumbnail(icon);
         }
     }
 }

@@ -3,10 +3,14 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
 using ZipViewer.Contracts;
 using ZipViewer.Contracts.File;
+using ZipViewer.Contracts.Navigation;
 using ZipViewer.Helpers;
+using ZipViewer.Models.Zip;
 using ZipViewer.Services;
 using ZipViewer.Services.File;
+using ZipViewer.Services.Navigation;
 using ZipViewer.ViewModels;
+using ZipViewer.ViewModels.Navigation;
 using ZipViewer.Views;
 
 namespace ZipViewer;
@@ -47,8 +51,11 @@ public partial class App : Application
         ConfigureServices((context, services) =>
         {
             //Services 
-            services.AddTransient<INavigationService, NavigationService>();
             services.AddTransient<IZipHierarchyBuilder, ZipHierarchyBuilder>();
+
+            //Navigation
+            services.AddSingleton<INavigationService, NavigationService>();
+            services.AddTransient<INavigationHistoryService<ZipContainerEntry>, NavigationHistoryService>();
 
             // File services
             services.AddTransient<IFilePickingService, FilePickingService>();
@@ -63,6 +70,7 @@ public partial class App : Application
             services.AddTransient<ShellPage>();
 
             services.AddTransient<ZipOperationsViewModel>();
+            services.AddTransient<ArchiveNavigationViewModel>();
 
         }).
         Build();

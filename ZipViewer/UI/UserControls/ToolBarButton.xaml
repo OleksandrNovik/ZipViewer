@@ -20,7 +20,7 @@
                     <RowDefinition />
                 </Grid.RowDefinitions>
 
-                <ImageIcon Source="{x:Bind IconSource}"  
+                <ImageIcon Source="{x:Bind IconSource}" x:Name="Icon" 
                            HorizontalAlignment="Center"
                            Width="{x:Bind IconSize}"  
                            Height="{x:Bind IconSize}" />
