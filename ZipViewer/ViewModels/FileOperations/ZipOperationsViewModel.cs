@@ -4,16 +4,20 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using ZipViewer.Contracts.File;
 using ZipViewer.Models.Messages;
+using ZipViewer.Models.Zip;
 
-namespace ZipViewer.ViewModels;
+namespace ZipViewer.ViewModels.FileOperations;
 public sealed partial class ZipOperationsViewModel : ObservableRecipient
 {
     private readonly IFilePickingService picker;
+    private readonly IFileService fileService;
+
     private ZipArchive? archive;
 
-    public ZipOperationsViewModel(IFilePickingService filePicker)
+    public ZipOperationsViewModel()
     {
-        picker = filePicker;
+        fileService = App.GetService<IFileService>();
+        picker = App.GetService<IFilePickingService>();
     }
 
     /// <summary>
@@ -35,6 +39,22 @@ public sealed partial class ZipOperationsViewModel : ObservableRecipient
             archive = ZipFile.OpenRead(file.Path);
 
             Messenger.Send(new ArchiveOpenedMessage(archive));
+        }
+    }
+
+    /// <summary>
+    /// Opens archive entry when executed
+    /// </summary>
+    /// <param name="entry"> Entry to open </param>
+    [RelayCommand]
+    public async Task OpenEntryAsync(ZipEntryWrapper entry)
+    {
+        if (entry is ZipContainerEntry openedContainer)
+        {
+            Messenger.Send(new NavigationRequiredMessage(openedContainer));
+        } else
+        {
+            await fileService.StartAsync(entry);
         }
     }
 

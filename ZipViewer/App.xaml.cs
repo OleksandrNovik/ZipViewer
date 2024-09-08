@@ -12,6 +12,7 @@ using ZipViewer.Services.Navigation;
 using ZipViewer.ViewModels;
 using ZipViewer.ViewModels.Navigation;
 using ZipViewer.Views;
+using ZipOperationsViewModel = ZipViewer.ViewModels.FileOperations.ZipOperationsViewModel;
 
 namespace ZipViewer;
 
@@ -31,6 +32,16 @@ public partial class App : Application
         }
 
         return service;
+    }
+
+    public static T GetStaticResource<T>(object key)
+    {
+        if (App.Current.Resources.TryGetValue(key, out object value) && value is T resource)
+        {
+            return resource;
+        }
+
+        throw new ArgumentException($"No resource with type {typeof(T)} that has provided key", nameof(key));
     }
 
     public static WindowEx MainWindow { get; } = new MainWindow();
@@ -69,7 +80,7 @@ public partial class App : Application
             services.AddTransient<ShellPageViewModel>();
             services.AddTransient<ShellPage>();
 
-            services.AddTransient<ZipOperationsViewModel>();
+            services.AddTransient(_ => GetStaticResource<ZipOperationsViewModel>(Constants.StaticResources.ZipOperations));
             services.AddTransient<ArchiveNavigationViewModel>();
 
         }).

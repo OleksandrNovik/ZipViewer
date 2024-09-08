@@ -60,7 +60,8 @@
             </controls:DataGrid.Columns>
 
             <interactivity:Interaction.Behaviors>
-                <dataGridBehaviors:DataGridItemDoubleClickBehavior Command="{x:Bind ViewModel.OpenEntryCommand}" />
+                <dataGridBehaviors:DataGridItemDoubleClickBehavior Command="{Binding Path=OpenEntryCommand, 
+                                                                                Source={StaticResource ZipOperations}}" />
             </interactivity:Interaction.Behaviors>
 
         </controls:DataGrid>

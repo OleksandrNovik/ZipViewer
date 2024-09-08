@@ -1,10 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
 using ZipViewer.Contracts.File;
 using ZipViewer.Helpers;
-using ZipViewer.Models.Messages;
 using ZipViewer.Models.Zip;
 using ZipViewer.ViewModels.Contracts;
 
@@ -14,7 +11,6 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
 {
     private ZipContainerEntry container;
     private readonly IFileInfoProvider infoProvider;
-    private readonly IFileService fileService;
 
     [ObservableProperty]
     private bool isArchiveSelected;
@@ -23,27 +19,10 @@ public partial class MainViewModel : ObservableRecipient, INavigationAware
         get;
         private set;
     }
-    public MainViewModel(IFileInfoProvider fileInfoProvider, IFileService fileService)
+    public MainViewModel(IFileInfoProvider fileInfoProvider)
     {
         infoProvider = fileInfoProvider;
-        this.fileService = fileService;
         isArchiveSelected = false;
-    }
-
-    /// <summary>
-    /// Opens archive entry when executed
-    /// </summary>
-    /// <param name="entry"> Entry to open </param>
-    [RelayCommand]
-    private async Task OpenEntryAsync(ZipEntryWrapper entry)
-    {
-        if (entry is ZipContainerEntry openedContainer)
-        {
-            Messenger.Send(new NavigationRequiredMessage(openedContainer));
-        } else
-        {
-            await fileService.StartAsync(entry);
-        }
     }
 
     private void InitializeDirectory(ZipContainerEntry currentContainer)
