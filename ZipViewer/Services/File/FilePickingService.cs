@@ -12,7 +12,7 @@ namespace ZipViewer.Services.File;
 public class FilePickingService : IFilePickingService
 {
     /// <inheritdoc />
-    public async Task<StorageFile?> OpenSingleAsync(params string[] extensions)
+    public async Task<StorageFile?> OpenSingleFileAsync(params string[] extensions)
     {
         var picker = new FileOpenPicker
         {
@@ -26,6 +26,4 @@ public class FilePickingService : IFilePickingService
 
         return await picker.PickSingleFileAsync();
     }
-
-
 }

@@ -1,5 +1,7 @@
 ﻿using System.Diagnostics;
+using System.IO.Compression;
 using ZipViewer.Contracts.File;
+using ZipViewer.Models.Contracts;
 using ZipViewer.Models.Zip;
 
 namespace ZipViewer.Services.File
@@ -9,6 +11,13 @@ namespace ZipViewer.Services.File
     /// </summary>
     public sealed class FileService : IFileService
     {
+        /// <inheritdoc />
+        public ZipArchive WorkingArchive
+        {
+            get;
+            set;
+        }
+
         /// <summary>
         /// Extracts file to a provided directory
         /// </summary>
@@ -70,6 +79,86 @@ namespace ZipViewer.Services.File
             if (sender is Process process)
             {
                 System.IO.File.Delete(process.StartInfo.FileName);
+            }
+        }
+
+        public string GenerateUniqueName(IEntriesContainer container, string template)
+        {
+            var itemsCounter = 1;
+            var nameWithoutExtension = Path.GetFileNameWithoutExtension(template);
+            var extension = Path.GetExtension(template);
+            var newName = template;
+
+            while (container.Contains(newName))
+            {
+                itemsCounter++;
+                newName = $"{nameWithoutExtension} ({itemsCounter}){extension}";
+            }
+
+            return newName;
+        }
+
+        /// <inheritdoc />
+        public ZipEntryWrapper CreateEntry(ZipContainerEntry creationContainer, string itemName, bool isDirectory)
+        {
+            // Generate unique name for a new item
+            var name = GenerateUniqueName(creationContainer, itemName);
+
+            // Adding to archive (if it is directory will add '/' to the end of the path
+            var path = Path.Combine(creationContainer.Path, name) + (isDirectory ? "/" : "");
+            var newEntry = WorkingArchive.CreateEntry(path);
+
+            //Creating wrapper and inserting it to the start 
+            var wrapper = isDirectory ? new ZipContainerEntry(newEntry) : new ZipEntryWrapper(newEntry);
+
+            creationContainer.InnerEntries.Add(wrapper);
+            wrapper.Parent = creationContainer;
+
+            return wrapper;
+        }
+
+        public async Task<ZipEntryWrapper> CopyEntryAsync(ZipContainerEntry destinationFolder, string copyName, ZipEntryWrapper source)
+        {
+            var sourceDirectory = source as ZipContainerEntry;
+            var isDirectory = sourceDirectory is not null;
+            var copy = CreateEntry(destinationFolder, copyName, isDirectory);
+
+            // If source is directory
+            if (isDirectory)
+            {
+                var copyDirectory = copy as ZipContainerEntry;
+
+                // Copy each inner item of target directory to a copy directory
+                foreach (var innerEntry in sourceDirectory!.InnerEntries.ToArray())
+                {
+                    await CopyEntryAsync(copyDirectory!, innerEntry.Name, innerEntry);
+                }
+
+            } else
+            {
+                // If it is file entry copy all the bytes
+                await source.CopyToAsync(copy);
+            }
+
+            return copy;
+        }
+
+        public async Task<ZipEntryWrapper> CutEntryAsync(ZipContainerEntry destinationFolder, string copyName, ZipEntryWrapper source)
+        {
+            // Cut is similar to copy
+            var copy = await CopyEntryAsync(destinationFolder, copyName, source);
+            // Only deleting source element
+            source.Delete();
+
+            return copy;
+        }
+
+        /// <inheritdoc />
+        public void DisposeArchive()
+        {
+            if (WorkingArchive is not null)
+            {
+                WorkingArchive.Dispose();
             }
         }
     }

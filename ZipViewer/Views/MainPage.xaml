@@ -35,7 +35,7 @@
                            CanUserReorderColumns="False"
                            CanUserResizeColumns="True"
                            CanUserSortColumns="True"
-                           ItemsSource="{x:Bind ViewModel.ContainerItems}"
+                           ItemsSource="{x:Bind ViewModel.ZipOperations.ContainerItems}"
                            Visibility="{x:Bind ViewModel.IsArchiveSelected, Mode=OneWay,
                                         Converter={StaticResource BoolToVisibilityConverter}}">
 
@@ -45,23 +45,24 @@
                                                  CellTemplate="{StaticResource NameTemplate}"></controls:DataGridTemplateColumn>
 
                 <controls:DataGridTextColumn Header="Last change" Binding="{Binding Path=LastChange, 
-                    Converter={StaticResource DateOffsetToFormatConverter}}" IsReadOnly="True" />
+                    Converter={StaticResource DateOffsetToFormatConverter}, Mode=OneWay}" IsReadOnly="True" />
 
-                <controls:DataGridTextColumn Header="Comment" Binding="{Binding Path=FileType}" IsReadOnly="True" />
+                <controls:DataGridTextColumn Header="Type" Binding="{Binding Path=FileType, Mode=OneWay}" IsReadOnly="True" />
 
-                <controls:DataGridTextColumn Header="Comment" Binding="{Binding Path=Comment}" />
+                <controls:DataGridTextColumn Header="Comment" Binding="{Binding Path=Comment, Mode=OneWay}" />
 
-                <controls:DataGridTextColumn Header="Size" Binding="{Binding Path=Size}" IsReadOnly="True" />
+                <controls:DataGridTextColumn Header="Size" Binding="{Binding Path=Size, Mode=OneWay}" IsReadOnly="True" />
 
-                <controls:DataGridTextColumn Header="Compressed size" Binding="{Binding Path=CompressedSize}" IsReadOnly="True" />
-
- 
+                <controls:DataGridTextColumn Header="Compressed size" Binding="{Binding Path=CompressedSize, Mode=OneWay}" IsReadOnly="True" />
 
             </controls:DataGrid.Columns>
 
             <interactivity:Interaction.Behaviors>
-                <dataGridBehaviors:DataGridItemDoubleClickBehavior Command="{Binding Path=OpenEntryCommand, 
-                                                                                Source={StaticResource ZipOperations}}" />
+
+                <dataGridBehaviors:DataGridItemDoubleClickBehavior Command="{x:Bind ViewModel.ZipOperations.OpenEntryCommand}" />
+
+                <dataGridBehaviors:MultipleSelectionDataGridBehavior SelectedItems="{x:Bind ViewModel.ZipOperations.SelectedItems}" />
+
             </interactivity:Interaction.Behaviors>
 
         </controls:DataGrid>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="ZipViewer.UI.UserControls.ToolBarDropDownButton"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:ZipViewer.UI.UserControls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid>
+        <DropDownButton BorderBrush="Transparent" 
+                VerticalAlignment="Stretch" 
+                HorizontalAlignment="Stretch"
+                Flyout="{x:Bind DropDownFlyout}">
+
+            <Grid Margin="12 0 0 0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+
+                <ImageIcon Source="{x:Bind IconSource}" 
+                           HorizontalAlignment="Center"
+                           Width="{x:Bind IconSize}"  
+                           Height="{x:Bind IconSize}" />
+                <TextBlock Grid.Row="1" Text="{x:Bind Text}" 
+                           HorizontalAlignment="Center" />
+            </Grid>
+        </DropDownButton>
+    </Grid>
+</UserControl>

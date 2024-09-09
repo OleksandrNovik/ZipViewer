@@ -24,8 +24,14 @@ public static class Win32Helper
     public static void GetInfoForEntry(ZipEntryWrapper entry)
     {
         var shFileInfo = new Shell32.SHFILEINFO();
+        var flags = entry.ExternalAttributes;
 
-        Shell32.SHGetFileInfo(entry.Path, entry.ExternalAttributes, ref shFileInfo, Marshal.SizeOf(shFileInfo),
+        if (entry is ZipContainerEntry)
+        {
+            flags |= FileAttributes.Directory;
+        }
+
+        Shell32.SHGetFileInfo(entry.Path, flags, ref shFileInfo, Marshal.SizeOf(shFileInfo),
              Shell32.SHGFI.SHGFI_ICON |
              Shell32.SHGFI.SHGFI_TYPENAME |
              Shell32.SHGFI.SHGFI_LARGEICON |

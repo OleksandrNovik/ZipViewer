@@ -12,6 +12,6 @@ public interface IFilePickingService
     /// </summary>
     /// <param name="extensions"> Extensions that are set to filter of picker </param>
     /// <returns> Storage item that was selected in picker menu </returns>
-    public Task<StorageFile?> OpenSingleAsync(params string[] extensions);
+    public Task<StorageFile?> OpenSingleFileAsync(params string[] extensions);
 
 }

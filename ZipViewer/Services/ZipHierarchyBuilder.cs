@@ -61,11 +61,10 @@ public sealed class ZipHierarchyBuilder : IZipHierarchyBuilder
             }
 
             var added = string.IsNullOrEmpty(current.Name) ?
-                new ZipContainerEntry(current)
-                {
-                    Parent = root
-                } : new ZipEntryWrapper(current);
+                new ZipContainerEntry(current) : new ZipEntryWrapper(current);
 
+            // Assign parent directory to added item
+            added.Parent = root;
             enumerator.MoveNext();
             entries.Add(added);
 
@@ -76,6 +75,6 @@ public sealed class ZipHierarchyBuilder : IZipHierarchyBuilder
         }
 
         // Set inner items for current folder as found items in method
-        root.InnerEntries = entries;
+        root.InnerEntries.AddRange(entries);
     }
 }

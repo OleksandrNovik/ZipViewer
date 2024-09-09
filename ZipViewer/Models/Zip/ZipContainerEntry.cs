@@ -1,28 +1,37 @@
 ﻿using System.IO.Compression;
 using ZipViewer.Helpers;
+using ZipViewer.Models.Contracts;
 
 namespace ZipViewer.Models.Zip;
 
-public sealed class ZipContainerEntry : ZipEntryWrapper
+public sealed class ZipContainerEntry : ZipEntryWrapper, IEntriesContainer
 {
-    public IReadOnlyList<ZipEntryWrapper> InnerEntries
+    public List<ZipEntryWrapper> InnerEntries
     {
         get;
-        set;
     }
-    public ZipContainerEntry? Parent
-    {
-        get;
-        set;
-    }
-
     public ZipContainerEntry(ZipArchiveEntry entry) : base(entry)
     {
         Name = PathHelper.GetArchiveDirectoryName(entry.FullName);
+        InnerEntries = [];
     }
 
+    /// <inheritdoc />
     public override void Delete()
     {
-        throw new NotImplementedException();
+        // Delete each item inside directory
+        foreach (var item in InnerEntries)
+        {
+            item.Delete();
+        }
+
+        // Delete directory itself 
+        base.Delete();
+    }
+
+    /// <inheritdoc />
+    public bool Contains(string name)
+    {
+        return InnerEntries.AsParallel().Any(entry => entry.Name == name);
     }
 }
