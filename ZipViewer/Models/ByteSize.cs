@@ -19,6 +19,12 @@ public sealed class ByteSize
         friendlyValue = Convert(inBytes);
     }
 
+    public ByteSize(ByteSize size)
+    {
+        InBytes = size.InBytes;
+        friendlyValue = Convert(InBytes);
+    }
+
     private string Convert(double value)
     {
         var converted = value;

@@ -25,25 +25,25 @@ namespace ZipViewer.Services.File
         /// <param name="path"> Path to directory that file should be created in </param>
         /// <returns> <see cref="FileInfo"/> that represents extracted item </returns>
         /// <exception cref="FileNotFoundException"> If file wa not created throws exception </exception>
-        public async Task<FileInfo> ExtractAsync(ZipEntryWrapper wrapper, string path)
+        public async Task<FileSystemInfo> ExtractAsync(ZipEntryWrapper wrapper, string path)
         {
             await wrapper.ExtractAsync(path);
-            var filePath = Path.Combine(path, wrapper.Name);
+            var extractedPath = Path.Combine(path, wrapper.Name);
 
-            if (!Path.Exists(filePath))
+            if (!Path.Exists(extractedPath))
             {
-                throw new FileNotFoundException("Cannot create file in temp location", filePath);
+                throw new FileNotFoundException("Cannot create physical item", extractedPath);
             }
 
-            return new FileInfo(filePath);
+            return wrapper is ZipFileEntry ? new FileInfo(extractedPath) : new DirectoryInfo(extractedPath);
         }
 
         /// <inheritdoc />
-        public async Task StartAsync(ZipEntryWrapper wrapper)
+        public async Task StartAsync(ZipFileEntry entryFile)
         {
             // Create file in temp location 
             var tempPath = Path.GetTempPath();
-            var file = await ExtractAsync(wrapper, tempPath);
+            var file = await ExtractAsync(entryFile, tempPath);
 
             try
             {
@@ -82,6 +82,7 @@ namespace ZipViewer.Services.File
             }
         }
 
+        /// <inheritdoc />
         public string GenerateUniqueName(IEntriesContainer container, string template)
         {
             var itemsCounter = 1;
@@ -109,7 +110,7 @@ namespace ZipViewer.Services.File
             var newEntry = WorkingArchive.CreateEntry(path);
 
             //Creating wrapper and inserting it to the start 
-            var wrapper = isDirectory ? new ZipContainerEntry(newEntry) : new ZipEntryWrapper(newEntry);
+            ZipEntryWrapper wrapper = isDirectory ? new ZipContainerEntry(newEntry) : new ZipFileEntry(newEntry);
 
             creationContainer.InnerEntries.Add(wrapper);
             wrapper.Parent = creationContainer;
@@ -117,6 +118,7 @@ namespace ZipViewer.Services.File
             return wrapper;
         }
 
+        /// <inheritdoc />
         public async Task<ZipEntryWrapper> CopyEntryAsync(ZipContainerEntry destinationFolder, string copyName, ZipEntryWrapper source)
         {
             var sourceDirectory = source as ZipContainerEntry;
@@ -134,10 +136,15 @@ namespace ZipViewer.Services.File
                     await CopyEntryAsync(copyDirectory!, innerEntry.Name, innerEntry);
                 }
 
+            } else if (source is ZipFileEntry file)
+            {
+                var copyFile = copy as ZipFileEntry;
+
+                // If it is file entry copy all the bytes
+                await file.CopyToAsync(copyFile!);
             } else
             {
-                // If it is file entry copy all the bytes
-                await source.CopyToAsync(copy);
+                throw new ArgumentException("Item is not zip wrapper", nameof(source));
             }
 
             return copy;
@@ -147,6 +154,7 @@ namespace ZipViewer.Services.File
         {
             // Cut is similar to copy
             var copy = await CopyEntryAsync(destinationFolder, copyName, source);
+
             // Only deleting source element
             source.Delete();
 

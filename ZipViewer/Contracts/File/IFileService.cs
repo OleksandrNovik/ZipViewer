@@ -20,14 +20,21 @@ public interface IFileService
     /// </summary>
     /// <param name="wrapper"> Entry to extract </param>
     /// <param name="path"> Path to directory that item needs to be extracted into </param>
-    /// <returns> <see cref="FileInfo"/> that represents extracted item </returns>
-    public Task<FileInfo> ExtractAsync(ZipEntryWrapper wrapper, string path);
+    /// <returns> <see cref="FileSystemInfo"/> that represents extracted item </returns>
+    public Task<FileSystemInfo> ExtractAsync(ZipEntryWrapper wrapper, string path);
 
     /// <summary>
     /// Starts zip entry in default application 
     /// </summary>
-    /// <param name="wrapper"> Entry that needs to be started </param>
-    public Task StartAsync(ZipEntryWrapper wrapper);
+    /// <param name="entryFile"> Entry file that needs to be started </param>
+    public Task StartAsync(ZipFileEntry entryFile);
+
+    /// <summary>
+    /// Generates unique name for an item inside provided container
+    /// </summary>
+    /// <param name="container"> Container of item </param>
+    /// <param name="namePattern"> Name template for item </param>
+    /// <returns> Unique name for provided container </returns>
     public string GenerateUniqueName(IEntriesContainer container, string namePattern);
 
     /// <summary>

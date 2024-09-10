@@ -4,13 +4,12 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml.Media.Imaging;
 using ZipViewer.Helpers.Extensions;
 using Icon = System.Drawing.Icon;
-using IOPath = System.IO.Path;
 
 namespace ZipViewer.Models.Zip;
 
-public partial class ZipEntryWrapper : ObservableObject, IEditableObject
+public abstract partial class ZipEntryWrapper : ObservableObject, IEditableObject
 {
-    private ZipArchiveEntry entry;
+    protected ZipArchiveEntry entry;
 
     [ObservableProperty]
     private string name;
@@ -45,13 +44,13 @@ public partial class ZipEntryWrapper : ObservableObject, IEditableObject
     public ByteSize Size
     {
         get;
-        private set;
+        protected set;
     }
 
     public ByteSize CompressedSize
     {
         get;
-        private set;
+        protected set;
     }
 
     public FileAttributes ExternalAttributes
@@ -90,16 +89,11 @@ public partial class ZipEntryWrapper : ObservableObject, IEditableObject
         entry.Delete();
     }
 
-    public async virtual Task ExtractAsync(string directory)
-    {
-        using (var fs = new FileStream(IOPath.Combine(directory, Name), FileMode.Create))
-        {
-            using (var entryStream = entry.Open())
-            {
-                await entryStream.CopyToAsync(fs);
-            }
-        }
-    }
+    /// <summary>
+    /// Creates exact copy of entry in windows file system
+    /// </summary>
+    /// <param name="directory"> Directory that item should be extract into </param>
+    public abstract Task ExtractAsync(string directory);
 
     /// <summary>
     /// Saves old name into backup and starts renaming item if it was not already renamed
@@ -134,20 +128,6 @@ public partial class ZipEntryWrapper : ObservableObject, IEditableObject
         {
             backUpName = Name;
             IsEditem = false;
-        }
-    }
-
-    public async virtual Task CopyToAsync(ZipEntryWrapper other)
-    {
-        other.Size = new ByteSize(entry.Length);
-        other.CompressedSize = new ByteSize(entry.CompressedLength);
-
-        using (var otherFs = other.entry.Open())
-        {
-            using (var thisFs = entry.Open())
-            {
-                await thisFs.CopyToAsync(otherFs);
-            }
         }
     }
 }

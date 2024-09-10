@@ -60,6 +60,18 @@
                                         Command="{x:Bind ViewModel.CopySelectedCommand}" />
 
             <userControls:ToolBarButton Width="120" 
+                                        Text="Cut" 
+                                        IconSize="45"
+                                        IconSource="ms-appx:///Assets/CommandIcons/OpenFileIcon.png"
+                                        Command="{x:Bind ViewModel.CutSelectedCommand}" />
+
+            <userControls:ToolBarButton Width="120" 
+                                        Text="Paste" 
+                                        IconSize="45"
+                                        IconSource="ms-appx:///Assets/CommandIcons/OpenFileIcon.png"
+                                        Command="{x:Bind ViewModel.PasteCommand}" />
+
+            <userControls:ToolBarButton Width="120" 
                                         Text="Delete" 
                                         IconSize="40"
                                         IconSource="ms-appx:///Assets/CommandIcons/DeleteIcon.png"

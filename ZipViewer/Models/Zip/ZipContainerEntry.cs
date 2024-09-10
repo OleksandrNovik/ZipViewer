@@ -1,6 +1,7 @@
 ﻿using System.IO.Compression;
 using ZipViewer.Helpers;
 using ZipViewer.Models.Contracts;
+using IOPath = System.IO.Path;
 
 namespace ZipViewer.Models.Zip;
 
@@ -27,6 +28,21 @@ public sealed class ZipContainerEntry : ZipEntryWrapper, IEntriesContainer
 
         // Delete directory itself 
         base.Delete();
+    }
+
+    /// <summary>
+    /// Creates directory and extracts each inner entry of this container
+    /// </summary>
+    /// <param name="directory"> Destination directory </param>
+    public async override Task ExtractAsync(string directory)
+    {
+        var directoryPath = IOPath.Combine(directory, Name);
+        Directory.CreateDirectory(directoryPath);
+
+        foreach (var entry in InnerEntries)
+        {
+            await entry.ExtractAsync(directoryPath);
+        }
     }
 
     /// <inheritdoc />

@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using ZipViewer.Contracts.File;
+using ZipViewer.Helpers;
 using ZipViewer.Models.Messages;
 using ZipViewer.Models.Zip;
 
@@ -71,11 +72,14 @@ public sealed partial class ZipOperationsViewModel : ObservableRecipient
     private void OnCollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
     {
         OpenSelectedCommand.NotifyCanExecuteChanged();
-        DeleteSelectedEntriesCommand.NotifyCanExecuteChanged();
         CopySelectedCommand.NotifyCanExecuteChanged();
+        CutSelectedCommand.NotifyCanExecuteChanged();
+        DeleteSelectedEntriesCommand.NotifyCanExecuteChanged();
     }
 
     private bool HasSelectedItems() => SelectedItems.Count > 0;
+
+    private bool HasCopiedItems() => ZipClipboard.Any;
 
     /// <summary>
     /// Opens .zip file using picker
@@ -118,9 +122,12 @@ public sealed partial class ZipOperationsViewModel : ObservableRecipient
         if (entry is ZipContainerEntry openedContainer)
         {
             Messenger.Send(new NavigationRequiredMessage(openedContainer));
+        } else if (entry is ZipFileEntry file)
+        {
+            await fileService.StartAsync(file);
         } else
         {
-            await fileService.StartAsync(entry);
+            throw new ArgumentException("Could not open entry", nameof(entry));
         }
     }
 
@@ -160,6 +167,8 @@ public sealed partial class ZipOperationsViewModel : ObservableRecipient
         //TODO: check if name is valid
 
         entry.EndEdit();
+        var newEntry = await fileService.CutEntryAsync(Container, entry.Name, entry);
+        InsertEntry(newEntry);
     }
 
     /// <summary>
@@ -177,28 +186,83 @@ public sealed partial class ZipOperationsViewModel : ObservableRecipient
             // Delete entry in archive
             SelectedItems[0].Delete();
             // Remove it from UI
-            DeleteEntry(SelectedItems[0]);
+            RemoveEntry(SelectedItems[0]);
             count--;
         }
     }
 
+    /// <summary>
+    /// Copies selected items to application's clipboard
+    /// </summary>
     [RelayCommand(CanExecute = nameof(HasSelectedItems))]
-    private async Task CopySelectedAsync()
+    private void CopySelected()
     {
-        foreach (var entry in SelectedItems)
+        ZipClipboard.SaveItems(SelectedItems.ToArray(), CopyOperation.Copy);
+        PasteCommand.NotifyCanExecuteChanged();
+    }
+
+    /// <summary>
+    /// Cuts selected items to application's clipboard
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(HasSelectedItems))]
+    private void CutSelected()
+    {
+        ZipClipboard.SaveItems(SelectedItems.ToArray(), CopyOperation.Cut);
+
+        // Items to delete
+        var count = SelectedItems.Count;
+
+        // Still have items to delete
+        while (count > 0)
         {
-            var copy = await fileService.CopyEntryAsync(Container, entry.Name, entry);
+            RemoveEntry(SelectedItems[0]);
+            count--;
+        }
+
+        PasteCommand.NotifyCanExecuteChanged();
+    }
+
+    /// <summary>
+    /// Pastes each entry in clipboard to current container
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(HasCopiedItems))]
+    private async Task PasteAsync()
+    {
+        // Get items and operation from clipboard
+        var (items, operation) = ZipClipboard.GetItems();
+
+        foreach (var entry in items)
+        {
+            ZipEntryWrapper copy;
+
+            if (operation == CopyOperation.Copy)
+            {
+                copy = await fileService.CopyEntryAsync(Container, entry.Name, entry);
+
+            } else
+            {
+                copy = await fileService.CutEntryAsync(Container, entry.Name, entry);
+            }
+
             InsertEntry(copy);
         }
     }
 
-    private void DeleteEntry(ZipEntryWrapper entry)
+    /// <summary>
+    /// Deletes (not physically) entry from UI collections and container it is held in
+    /// </summary>
+    /// <param name="entry"> Entry to delete (not physically)</param>
+    private void RemoveEntry(ZipEntryWrapper entry)
     {
         ContainerItems.Remove(entry);
         Container.InnerEntries.Remove(entry);
         SelectedItems.Remove(entry);
     }
 
+    /// <summary>
+    /// Inserts entry into UI container items and updates its UI data
+    /// </summary>
+    /// <param name="entry"> Entry to insert </param>
     private void InsertEntry(ZipEntryWrapper entry)
     {
         // Add to UI items 

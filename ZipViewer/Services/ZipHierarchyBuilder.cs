@@ -60,8 +60,8 @@ public sealed class ZipHierarchyBuilder : IZipHierarchyBuilder
                 break;
             }
 
-            var added = string.IsNullOrEmpty(current.Name) ?
-                new ZipContainerEntry(current) : new ZipEntryWrapper(current);
+            ZipEntryWrapper added = string.IsNullOrEmpty(current.Name) ?
+                new ZipContainerEntry(current) : new ZipFileEntry(current);
 
             // Assign parent directory to added item
             added.Parent = root;
