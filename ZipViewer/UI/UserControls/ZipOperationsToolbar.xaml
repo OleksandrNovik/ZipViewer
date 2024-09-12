@@ -20,15 +20,23 @@
                                         IconSize="50"
                                         IconSource="ms-appx:///Assets/CommandIcons/ZipIcon.png" />
 
-            <userControls:ToolBarButton Width="120" 
-                                        Text="Add to archive" 
-                                        IconSize="50"
-                                        IconSource="ms-appx:///Assets/CommandIcons/OpenIcon.png" 
-                                        Command="{x:Bind ViewModel.ZipDirectoryCommand}"/>
+            <userControls:ToolBarDropDownButton Text="Add to archive" 
+                                                IconSize="45"
+                                                IconSource="ms-appx:///Assets/CommandIcons/OpenIcon.png">
+
+                <userControls:ToolBarDropDownButton.DropDownFlyout>
+                    <MenuFlyout Placement="Bottom">
+                        <MenuFlyoutItem Text="Files" Command="{x:Bind ViewModel.AddFileEntriesCommand}" />
+                        <MenuFlyoutItem Text="Folder" Command="{x:Bind ViewModel.AddDirectoryEntryCommand}" />
+                    </MenuFlyout>
+                </userControls:ToolBarDropDownButton.DropDownFlyout>
+
+            </userControls:ToolBarDropDownButton>
 
             <userControls:ToolBarButton Width="120" 
                                         Text="Extract to folder" 
                                         IconSize="50"
+                                        Command="{x:Bind ViewModel.AddDirectoryEntryCommand}"
                                         IconSource="ms-appx:///Assets/CommandIcons/ExtractIcon.png" />
 
             <Border BorderThickness="0.5 0" VerticalAlignment="Stretch" BorderBrush="{ThemeResource ButtonBorderThemeBrush}" />
@@ -47,28 +55,11 @@
 
             </userControls:ToolBarDropDownButton>
 
-            <userControls:ToolBarButton Width="120" 
-                                        Text="Open" 
-                                        IconSize="45"
-                                        IconSource="ms-appx:///Assets/CommandIcons/OpenFileIcon.png"
-                                        Command="{x:Bind ViewModel.OpenSelectedCommand}" />
-
-            <userControls:ToolBarButton Width="120" 
-                                        Text="Copy" 
-                                        IconSize="45"
-                                        IconSource="ms-appx:///Assets/CommandIcons/OpenFileIcon.png"
-                                        Command="{x:Bind ViewModel.CopySelectedCommand}" />
-
-            <userControls:ToolBarButton Width="120" 
-                                        Text="Cut" 
-                                        IconSize="45"
-                                        IconSource="ms-appx:///Assets/CommandIcons/OpenFileIcon.png"
-                                        Command="{x:Bind ViewModel.CutSelectedCommand}" />
 
             <userControls:ToolBarButton Width="120" 
                                         Text="Paste" 
-                                        IconSize="45"
-                                        IconSource="ms-appx:///Assets/CommandIcons/OpenFileIcon.png"
+                                        IconSize="50"
+                                        IconSource="ms-appx:///Assets/CommandIcons/PasteIcon.png"
                                         Command="{x:Bind ViewModel.PasteCommand}" />
 
             <userControls:ToolBarButton Width="120" 

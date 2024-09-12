@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using ZipViewer.Contracts;
 using ZipViewer.Contracts.File;
 using ZipViewer.Contracts.Navigation;
@@ -18,6 +19,11 @@ namespace ZipViewer;
 
 public partial class App : Application
 {
+    public static CommandBarFlyout ContextMenu
+    {
+        get;
+        set;
+    }
     public IHost Host
     {
         get;
@@ -54,7 +60,6 @@ public partial class App : Application
     public App()
     {
         ThreadingHelper.InitializeForMainThread();
-        InitializeComponent();
 
         Host = Microsoft.Extensions.Hosting.Host.
         CreateDefaultBuilder().
@@ -85,6 +90,8 @@ public partial class App : Application
 
         }).
         Build();
+
+        InitializeComponent();
     }
 
     /// <summary>

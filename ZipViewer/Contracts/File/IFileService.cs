@@ -1,4 +1,5 @@
 ﻿using System.IO.Compression;
+using Windows.Storage;
 using ZipViewer.Models.Contracts;
 using ZipViewer.Models.Zip;
 
@@ -54,5 +55,11 @@ public interface IFileService
     /// Disposes archive if it's necessary
     /// </summary>
     public void DisposeArchive();
+
+    public Task<IReadOnlyCollection<ZipFileEntry>> CrateFileEntriesAsync(IReadOnlyCollection<StorageFile> files,
+        ZipContainerEntry inContainer);
+
+    public Task<ZipContainerEntry> CreateContainerEntryAsync(StorageFolder folder, ZipContainerEntry inContainer);
+
 
 }

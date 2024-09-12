@@ -20,7 +20,7 @@ public sealed class ZipFileEntry : ZipEntryWrapper
     /// Copies entry's bytes to a provided stream
     /// </summary>
     /// <param name="stream"> Stream destination that bytes are getting copied into </param>
-    public async Task CopyStreamAsync(Stream stream)
+    public async Task CopyToStreamAsync(Stream stream)
     {
         using (var fs = entry.Open())
         {
@@ -36,7 +36,7 @@ public sealed class ZipFileEntry : ZipEntryWrapper
     {
         using (var fs = new FileStream(System.IO.Path.Combine(directory, Name), FileMode.Create))
         {
-            await CopyStreamAsync(fs);
+            await CopyToStreamAsync(fs);
         }
     }
 
@@ -52,7 +52,7 @@ public sealed class ZipFileEntry : ZipEntryWrapper
 
         using (var otherFs = other.Open())
         {
-            await CopyStreamAsync(otherFs);
+            await CopyToStreamAsync(otherFs);
         }
     }
 }

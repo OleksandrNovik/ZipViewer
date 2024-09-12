@@ -108,8 +108,34 @@ public sealed partial class ZipOperationsViewModel : ObservableRecipient
     {
     }
 
-    private async Task AddEntryAsync()
+    /// <summary>
+    /// Adds entries from files that were picked
+    /// </summary>
+    [RelayCommand]
+    private async Task AddFileEntriesAsync()
     {
+        //Get files from picker with any type
+        var files = await picker.OpenMultipleFilesAsync("*");
+
+        // Archive them and convert them to wrappers 
+        var wrappers = await fileService.CrateFileEntriesAsync(files, Container);
+
+        // Add to UI list
+        foreach (var wrapper in wrappers)
+        {
+            InsertEntry(wrapper);
+        }
+    }
+
+    [RelayCommand]
+    private async Task AddDirectoryEntryAsync()
+    {
+        // The same for directory get directory items
+        var directory = await picker.OpenSingleFolderAsync();
+
+        var wrapper = await fileService.CreateContainerEntryAsync(directory, Container);
+
+        InsertEntry(wrapper);
     }
 
     /// <summary>
@@ -209,16 +235,6 @@ public sealed partial class ZipOperationsViewModel : ObservableRecipient
     {
         ZipClipboard.SaveItems(SelectedItems.ToArray(), CopyOperation.Cut);
 
-        // Items to delete
-        var count = SelectedItems.Count;
-
-        // Still have items to delete
-        while (count > 0)
-        {
-            RemoveEntry(SelectedItems[0]);
-            count--;
-        }
-
         PasteCommand.NotifyCanExecuteChanged();
     }
 
@@ -242,6 +258,11 @@ public sealed partial class ZipOperationsViewModel : ObservableRecipient
             } else
             {
                 copy = await fileService.CutEntryAsync(Container, entry.Name, entry);
+                // Since items are cut notify that there are no items in clipboard 
+                PasteCommand.NotifyCanExecuteChanged();
+
+                // Remove item if exists from container (to prevent pasting item that was cut in same directory)
+                ContainerItems.Remove(entry);
             }
 
             InsertEntry(copy);

@@ -25,10 +25,62 @@
             </Grid>
         </DataTemplate>
 
+        <DataTemplate x:Name="SizeTemplate" x:DataType="zip:ZipEntryWrapper">
+            <TextBlock Text="{x:Bind Size, Mode=OneWay}" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <ToolTipService.ToolTip>
+                    <ToolTip Visibility="{x:Bind HasSize, Mode=OneWay, 
+                        Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=True}"
+                        Content="Cannot evaluate size of the file, because it is added in this session." />
+                </ToolTipService.ToolTip>
+            </TextBlock>
+        </DataTemplate>
+
+        <DataTemplate x:Name="CompressedSizeTemplate" x:DataType="zip:ZipEntryWrapper">
+            <TextBlock Text="{x:Bind CompressedSize, Mode=OneWay}" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <ToolTipService.ToolTip>
+                    <ToolTip Visibility="{x:Bind HasSize, Mode=OneWay, 
+                        Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=True}"
+                             Content="Cannot evaluate size of the file, because it is added in this session." />
+                </ToolTipService.ToolTip>
+            </TextBlock>
+        </DataTemplate>
+
+        <MenuFlyout x:Key="ContextMenu">
+            <MenuFlyoutItem Text="Open" Command="{x:Bind ViewModel.ZipOperations.OpenSelectedCommand}">
+                <MenuFlyoutItem.Icon>
+                    <FontIcon Glyph="&#xED25;" FontSize="14" />
+                </MenuFlyoutItem.Icon>
+            </MenuFlyoutItem>
+
+            <MenuFlyoutSeparator />
+
+            <MenuFlyoutItem Text="Copy" Command="{x:Bind ViewModel.ZipOperations.CopySelectedCommand}">
+                <MenuFlyoutItem.Icon>
+                    <FontIcon Glyph="&#xE8C8;" FontSize="14" />
+                </MenuFlyoutItem.Icon>
+            </MenuFlyoutItem>
+
+
+            <MenuFlyoutItem Text="Cut" Command="{x:Bind ViewModel.ZipOperations.CutSelectedCommand}">
+                <MenuFlyoutItem.Icon>
+                    <FontIcon Glyph="&#xE8C6;" FontSize="14" />
+                </MenuFlyoutItem.Icon>
+            </MenuFlyoutItem>
+
+            <MenuFlyoutSeparator />
+
+            <MenuFlyoutItem Text="Delete" Command="{x:Bind ViewModel.ZipOperations.DeleteSelectedEntriesCommand}">
+                <MenuFlyoutItem.Icon>
+                    <FontIcon Glyph="&#xE74D;" FontSize="14" />
+                </MenuFlyoutItem.Icon>
+            </MenuFlyoutItem>
+        </MenuFlyout>
+
         <converters:DateOffsetToFormatConverter Format="g" x:Key="DateOffsetToFormatConverter" />
     </Page.Resources>
 
     <Grid  Margin="20"
+           ContextFlyout="{StaticResource ContextMenu}"
            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
         <controls:DataGrid AutoGenerateColumns="False" 
@@ -51,9 +103,11 @@
 
                 <controls:DataGridTextColumn Header="Comment" Binding="{Binding Path=Comment, Mode=OneWay}" />
 
-                <controls:DataGridTextColumn Header="Size" Binding="{Binding Path=Size, Mode=OneWay}" IsReadOnly="True" />
+                <controls:DataGridTemplateColumn Header="Size"
+                    CellTemplate="{StaticResource SizeTemplate}" IsReadOnly="True"/>
 
-                <controls:DataGridTextColumn Header="Compressed size" Binding="{Binding Path=CompressedSize, Mode=OneWay}" IsReadOnly="True" />
+                <controls:DataGridTemplateColumn Header="Compressed size"
+                                                 CellTemplate="{StaticResource CompressedSizeTemplate}" IsReadOnly="True"/>
 
             </controls:DataGrid.Columns>
 

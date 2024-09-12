@@ -65,21 +65,38 @@ public abstract partial class ZipEntryWrapper : ObservableObject, IEditableObjec
         set;
     }
 
+    public bool HasSize
+    {
+        get;
+    }
+
     [ObservableProperty]
     private string fileType;
 
     public ZipEntryWrapper(ZipArchiveEntry entry)
     {
         this.entry = entry;
-        Size = new ByteSize(entry.Length);
-        CompressedSize = new ByteSize(entry.CompressedLength);
+        try
+        {
+            Size = new ByteSize(entry.Length);
+            CompressedSize = new ByteSize(entry.CompressedLength);
+            HasSize = true;
+        }
+        // If size cannot be evaluated since entry has been opened
+        catch (InvalidOperationException)
+        {
+            Size = ByteSize.Unknown;
+            CompressedSize = ByteSize.Unknown;
+            HasSize = false;
+        }
+
         ExternalAttributes = (FileAttributes)entry.ExternalAttributes;
         name = entry.Name;
-        Thumbnail = new BitmapImage();
     }
 
     public void UpdateThumbnail(Icon thumbnailSource)
     {
+        Thumbnail ??= new BitmapImage();
         Thumbnail.SetSource(thumbnailSource);
         OnPropertyChanged(nameof(Thumbnail));
     }

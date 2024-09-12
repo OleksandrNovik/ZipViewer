@@ -22,6 +22,7 @@ public sealed partial class MainWindow : WindowEx
         settings.ColorValuesChanged += OnSettingsColorValuesChanged;
     }
 
+
     /// <summary>
     /// This handles updating the caption button colors correctly when Windows system theme is changed
     /// while the app is open

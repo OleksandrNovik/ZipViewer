@@ -1,5 +1,4 @@
 ﻿using Microsoft.UI.Xaml.Controls;
-
 using ZipViewer.ViewModels;
 
 namespace ZipViewer.Views;

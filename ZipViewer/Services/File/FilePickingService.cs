@@ -26,4 +26,33 @@ public class FilePickingService : IFilePickingService
 
         return await picker.PickSingleFileAsync();
     }
+
+    public async Task<IReadOnlyCollection<StorageFile>> OpenMultipleFilesAsync(params string[] extensions)
+    {
+        var picker = new FileOpenPicker
+        {
+            ViewMode = PickerViewMode.Thumbnail,
+            SuggestedStartLocation = PickerLocationId.ComputerFolder
+        };
+
+        picker.FileTypeFilter.AddRange(extensions);
+
+        Win32Helper.ProvideWindowHandle(picker);
+
+        return await picker.PickMultipleFilesAsync();
+    }
+
+    public async Task<StorageFolder> OpenSingleFolderAsync()
+    {
+        var picker = new FolderPicker
+        {
+            ViewMode = PickerViewMode.Thumbnail,
+            SuggestedStartLocation = PickerLocationId.ComputerFolder
+        };
+        picker.FileTypeFilter.Add("*");
+
+        Win32Helper.ProvideWindowHandle(picker);
+
+        return await picker.PickSingleFolderAsync();
+    }
 }

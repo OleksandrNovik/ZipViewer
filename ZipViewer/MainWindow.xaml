@@ -10,7 +10,9 @@
     MinHeight="500"
     PersistenceId="MainWindow"
     mc:Ignorable="d">
+
     <Window.SystemBackdrop>
         <DesktopAcrylicBackdrop />
     </Window.SystemBackdrop>
+
 </windowex:WindowEx>

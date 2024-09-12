@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.IO.Compression;
+using Windows.Storage;
 using ZipViewer.Contracts.File;
 using ZipViewer.Models.Contracts;
 using ZipViewer.Models.Zip;
@@ -168,6 +169,53 @@ namespace ZipViewer.Services.File
             {
                 WorkingArchive.Dispose();
             }
+        }
+
+        public async Task<IReadOnlyCollection<ZipFileEntry>> CrateFileEntriesAsync(IReadOnlyCollection<StorageFile> files,
+            ZipContainerEntry inContainer)
+        {
+            var archiveFiles = new List<ZipFileEntry>();
+
+            await Task.Run(async () =>
+            {
+                await Parallel.ForEachAsync(files, (file, token) =>
+                {
+                    var uniqueName = GenerateUniqueName(inContainer, file.Name);
+                    var entry = WorkingArchive.CreateEntryFromFile(file.Path,
+                        Path.Combine(inContainer.Path, uniqueName));
+
+                    // Create wrapper from entry
+                    var zippedFile = new ZipFileEntry(entry);
+
+                    // Add to the resulting items 
+                    archiveFiles.Add(zippedFile);
+
+                    // Add to container's inner items
+                    inContainer.InnerEntries.Add(zippedFile);
+                    return ValueTask.CompletedTask;
+                });
+            });
+
+            return archiveFiles;
+        }
+
+        public async Task<ZipContainerEntry> CreateContainerEntryAsync(StorageFolder folder, ZipContainerEntry inContainer)
+        {
+            var files = await folder.GetFilesAsync();
+            var folders = await folder.GetFoldersAsync();
+
+            var wrapperContainer = CreateEntry(inContainer, folder.Name, true) as ZipContainerEntry;
+
+            ArgumentNullException.ThrowIfNull(wrapperContainer);
+
+            await Parallel.ForEachAsync(folders, async (storageFolder, token) =>
+            {
+                await CreateContainerEntryAsync(storageFolder, wrapperContainer);
+            });
+
+            await CrateFileEntriesAsync(files, wrapperContainer);
+
+            return wrapperContainer;
         }
     }
 }

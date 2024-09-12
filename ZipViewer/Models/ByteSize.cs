@@ -2,6 +2,15 @@
 
 public sealed class ByteSize
 {
+    public static ByteSize Unknown
+    {
+        get
+        {
+            var size = new ByteSize(0);
+            size.friendlyValue = "??";
+            return size;
+        }
+    }
     public static readonly string[] Sizes =
     [
         "B", "kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "RB", "QB"

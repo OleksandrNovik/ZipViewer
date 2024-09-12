@@ -1,10 +1,11 @@
-﻿{
-    "profiles": {
-      "ZipViewer (Package)": {
-        "commandName": "MsixPackage"
-      },
-      "ZipViewer (Unpackaged)": {
-        "commandName": "Project"
-      }
+{
+  "profiles": {
+    "ZipViewer (Package)": {
+      "commandName": "MsixPackage",
+      "nativeDebugging": true
+    },
+    "ZipViewer (Unpackaged)": {
+      "commandName": "Project"
     }
+  }
 }
