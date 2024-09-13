@@ -69,6 +69,14 @@
 
             <MenuFlyoutSeparator />
 
+            <MenuFlyoutItem Text="Extract to" Command="{x:Bind ViewModel.ZipOperations.ExtractSelectedCommand}">
+                <MenuFlyoutItem.Icon>
+                    <FontIcon Glyph="&#xE8C6;" FontSize="14" />
+                </MenuFlyoutItem.Icon>
+            </MenuFlyoutItem>
+
+            <MenuFlyoutSeparator />
+
             <MenuFlyoutItem Text="Delete" Command="{x:Bind ViewModel.ZipOperations.DeleteSelectedEntriesCommand}">
                 <MenuFlyoutItem.Icon>
                     <FontIcon Glyph="&#xE74D;" FontSize="14" />

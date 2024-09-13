@@ -75,6 +75,7 @@ public sealed partial class ZipOperationsViewModel : ObservableRecipient
         CopySelectedCommand.NotifyCanExecuteChanged();
         CutSelectedCommand.NotifyCanExecuteChanged();
         DeleteSelectedEntriesCommand.NotifyCanExecuteChanged();
+        ExtractSelectedCommand.NotifyCanExecuteChanged();
     }
 
     private bool HasSelectedItems() => SelectedItems.Count > 0;
@@ -236,6 +237,17 @@ public sealed partial class ZipOperationsViewModel : ObservableRecipient
         ZipClipboard.SaveItems(SelectedItems.ToArray(), CopyOperation.Cut);
 
         PasteCommand.NotifyCanExecuteChanged();
+    }
+
+    [RelayCommand(CanExecute = nameof(HasSelectedItems))]
+    private async Task ExtractSelectedAsync()
+    {
+        var destination = await picker.OpenSingleFolderAsync();
+
+        await Parallel.ForEachAsync(SelectedItems, async (entry, token) =>
+        {
+            await entry.ExtractAsync(destination.Path);
+        });
     }
 
     /// <summary>

@@ -17,12 +17,12 @@ public interface IFileService
     }
 
     /// <summary>
-    /// Extracts zip entry to a provided location 
+    /// Extracts file zip entry to a provided location 
     /// </summary>
     /// <param name="wrapper"> Entry to extract </param>
     /// <param name="path"> Path to directory that item needs to be extracted into </param>
     /// <returns> <see cref="FileSystemInfo"/> that represents extracted item </returns>
-    public Task<FileSystemInfo> ExtractAsync(ZipEntryWrapper wrapper, string path);
+    public Task<FileInfo> ExtractToFileAsync(ZipFileEntry wrapper, string path);
 
     /// <summary>
     /// Starts zip entry in default application 

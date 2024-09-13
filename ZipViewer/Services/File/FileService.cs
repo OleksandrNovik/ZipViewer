@@ -26,7 +26,7 @@ namespace ZipViewer.Services.File
         /// <param name="path"> Path to directory that file should be created in </param>
         /// <returns> <see cref="FileInfo"/> that represents extracted item </returns>
         /// <exception cref="FileNotFoundException"> If file wa not created throws exception </exception>
-        public async Task<FileSystemInfo> ExtractAsync(ZipEntryWrapper wrapper, string path)
+        public async Task<FileInfo> ExtractToFileAsync(ZipFileEntry wrapper, string path)
         {
             await wrapper.ExtractAsync(path);
             var extractedPath = Path.Combine(path, wrapper.Name);
@@ -36,7 +36,7 @@ namespace ZipViewer.Services.File
                 throw new FileNotFoundException("Cannot create physical item", extractedPath);
             }
 
-            return wrapper is ZipFileEntry ? new FileInfo(extractedPath) : new DirectoryInfo(extractedPath);
+            return new FileInfo(extractedPath);
         }
 
         /// <inheritdoc />
@@ -44,7 +44,7 @@ namespace ZipViewer.Services.File
         {
             // Create file in temp location 
             var tempPath = Path.GetTempPath();
-            var file = await ExtractAsync(entryFile, tempPath);
+            var file = await ExtractToFileAsync(entryFile, tempPath);
 
             try
             {
@@ -208,12 +208,15 @@ namespace ZipViewer.Services.File
 
             ArgumentNullException.ThrowIfNull(wrapperContainer);
 
-            await Parallel.ForEachAsync(folders, async (storageFolder, token) =>
-            {
-                await CreateContainerEntryAsync(storageFolder, wrapperContainer);
-            });
-
             await CrateFileEntriesAsync(files, wrapperContainer);
+
+            await Task.Run(async () =>
+            {
+                foreach (var storageFolder in folders)
+                {
+                    await CreateContainerEntryAsync(storageFolder, wrapperContainer);
+                }
+            });
 
             return wrapperContainer;
         }
