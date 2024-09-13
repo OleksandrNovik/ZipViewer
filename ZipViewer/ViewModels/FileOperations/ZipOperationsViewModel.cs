@@ -20,7 +20,7 @@ public sealed partial class ZipOperationsViewModel : ObservableRecipient
     private readonly IFileService fileService;
 
     [ObservableProperty]
-    private bool canCrateItem;
+    private bool canAddItemsToArchive;
 
     private ZipContainerEntry container;
     public ZipContainerEntry Container
@@ -31,7 +31,7 @@ public sealed partial class ZipOperationsViewModel : ObservableRecipient
             if (container != value)
             {
                 container = value;
-                CanCrateItem = true;
+                CanAddItemsToArchive = true;
                 ContainerItems = new ObservableCollection<ZipEntryWrapper>(container.InnerEntries);
             }
         }
@@ -53,7 +53,7 @@ public sealed partial class ZipOperationsViewModel : ObservableRecipient
 
     public ZipOperationsViewModel()
     {
-        canCrateItem = false;
+        canAddItemsToArchive = false;
         fileService = App.GetService<IFileService>();
         picker = App.GetService<IFilePickingService>();
         infoProvider = App.GetService<IFileInfoProvider>();
@@ -78,9 +78,18 @@ public sealed partial class ZipOperationsViewModel : ObservableRecipient
         ExtractSelectedCommand.NotifyCanExecuteChanged();
     }
 
+    private void NotifyArchiveOpened()
+    {
+        AddDirectoryEntryCommand.NotifyCanExecuteChanged();
+        AddFileEntriesCommand.NotifyCanExecuteChanged();
+        ExtractToDirectoryCommand.NotifyCanExecuteChanged();
+    }
+
     private bool HasSelectedItems() => SelectedItems.Count > 0;
 
     private bool HasCopiedItems() => ZipClipboard.Any;
+
+    private bool IsArchiveOpened() => fileService.WorkingArchive is not null;
 
     /// <summary>
     /// Opens .zip file using picker
@@ -88,31 +97,37 @@ public sealed partial class ZipOperationsViewModel : ObservableRecipient
     [RelayCommand]
     private async Task OpenArchive()
     {
-        // Dispose previous archive if needed
-        fileService.DisposeArchive();
-
         // Pick up .zip file to open
         var file = await picker.OpenSingleFileAsync(".zip");
 
         // User selected file
         if (file is not null)
         {
+            // Dispose previous archive if needed
+            fileService.DisposeArchive();
+
             // Open .zip file
             fileService.WorkingArchive = ZipFile.Open(file.Path, ZipArchiveMode.Update);
 
             Messenger.Send(new ArchiveOpenedMessage(fileService.WorkingArchive));
+
+            NotifyArchiveOpened();
         }
     }
 
-    [RelayCommand]
-    private void ZipDirectory()
+    [RelayCommand(CanExecute = nameof(IsArchiveOpened))]
+    private async Task ExtractToDirectory()
     {
+        var destination = await picker.OpenSingleFolderAsync();
+
+        await fileService.ExtractToFolderAsync(destination.Path);
+
     }
 
     /// <summary>
     /// Adds entries from files that were picked
     /// </summary>
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(IsArchiveOpened))]
     private async Task AddFileEntriesAsync()
     {
         //Get files from picker with any type
@@ -128,7 +143,7 @@ public sealed partial class ZipOperationsViewModel : ObservableRecipient
         }
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(IsArchiveOpened))]
     private async Task AddDirectoryEntryAsync()
     {
         // The same for directory get directory items

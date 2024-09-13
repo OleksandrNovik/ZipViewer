@@ -61,5 +61,5 @@ public interface IFileService
 
     public Task<ZipContainerEntry> CreateContainerEntryAsync(StorageFolder folder, ZipContainerEntry inContainer);
 
-
+    public Task ExtractToFolderAsync(string path);
 }

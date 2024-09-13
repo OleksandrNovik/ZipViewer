@@ -220,5 +220,13 @@ namespace ZipViewer.Services.File
 
             return wrapperContainer;
         }
+
+        public async Task ExtractToFolderAsync(string path)
+        {
+            await Task.Run(() =>
+            {
+                WorkingArchive.ExtractToDirectory(path);
+            });
+        }
     }
 }

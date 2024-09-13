@@ -22,6 +22,7 @@
 
             <userControls:ToolBarDropDownButton Text="Add to archive" 
                                                 IconSize="45"
+                                                IsEnabled="{x:Bind ViewModel.CanAddItemsToArchive, Mode=OneWay}"
                                                 IconSource="ms-appx:///Assets/CommandIcons/OpenIcon.png">
 
                 <userControls:ToolBarDropDownButton.DropDownFlyout>
@@ -36,7 +37,7 @@
             <userControls:ToolBarButton Width="120" 
                                         Text="Extract to folder" 
                                         IconSize="50"
-                                        Command="{x:Bind ViewModel.AddDirectoryEntryCommand}"
+                                        Command="{x:Bind ViewModel.ExtractToDirectoryCommand}"
                                         IconSource="ms-appx:///Assets/CommandIcons/ExtractIcon.png" />
 
             <Border BorderThickness="0.5 0" VerticalAlignment="Stretch" BorderBrush="{ThemeResource ButtonBorderThemeBrush}" />
@@ -44,6 +45,7 @@
 
             <userControls:ToolBarDropDownButton Text="Create" 
                                                 IconSize="45"
+                                                IsEnabled="{x:Bind ViewModel.CanAddItemsToArchive, Mode=OneWay}"
                                                 IconSource="ms-appx:///Assets/CommandIcons/CreateIcon.png">
 
                 <userControls:ToolBarDropDownButton.DropDownFlyout>
@@ -58,6 +60,7 @@
 
             <userControls:ToolBarButton Width="120" 
                                         Text="Paste" 
+                                        
                                         IconSize="50"
                                         IconSource="ms-appx:///Assets/CommandIcons/PasteIcon.png"
                                         Command="{x:Bind ViewModel.PasteCommand}" />
